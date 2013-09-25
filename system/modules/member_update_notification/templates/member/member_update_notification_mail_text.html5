@@ -1,0 +1,5 @@
+Das Mitglied <?php echo $this->name; ?> hat gerade die Daten seines Profils geändert:
+
+<?php foreach( $this->fields as $name => $value ): ?>
+* <?php echo $name; ?>: <?php echo $value; ?>
+<?php endforeach; ?>
