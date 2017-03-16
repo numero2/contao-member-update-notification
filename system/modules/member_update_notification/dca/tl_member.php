@@ -35,7 +35,12 @@ class tl_member_update_notification extends Backend {
 		// find changed fields
 		$changedFields = array();
 
-		foreach( $GLOBALS['TL_DCA']['tl_member']['fields'] as $fieldName => $fieldConfig ) {
+		foreach( $_POST as $fieldName => $fVal ) {
+
+            if( empty($GLOBALS['TL_DCA']['tl_member']['fields'][$fieldName]) )
+                continue;
+
+            $fieldConfig = $GLOBALS['TL_DCA']['tl_member']['fields'][$fieldName];
 
 			$newValue = Input::post($fieldName);
 
@@ -45,18 +50,31 @@ class tl_member_update_notification extends Backend {
 			if( !$newValue )
 				continue;
 
-			$label = $GLOBALS['TL_LANG']['tl_member'][$fieldName][0];
-
-			if( !$label )
-				continue;
+			$label = ($GLOBALS['TL_LANG']['tl_member'][$fieldName][0]) ? $GLOBALS['TL_LANG']['tl_member'][$fieldName][0] : $fieldName;
 
 			if( !empty($fieldConfig['options']) ) {
 
-				if( !empty($fieldConfig['reference']) ) {
-					$changedFields[$label] = $fieldConfig['reference'][ $newValue ];
-				} else {
-					$changedFields[$label] = $fieldConfig['options'][ $newValue ];
-				}
+                if( !empty($fieldConfig['eval']['multiple']) && is_array($newValue) ) {
+
+                    foreach( $newValue as $v ) {
+
+                        if( !empty($fieldConfig['reference']) ) {
+                            $val = $fieldConfig['reference'][ $v ];
+                        } else {
+                            $val = $fieldConfig['options'][ $v ];
+                        }
+
+                        $changedFields[$label] .= $val.', ';
+                    }
+
+                } else {
+
+                    if( !empty($fieldConfig['reference']) ) {
+                        $changedFields[$label] = $fieldConfig['reference'][ $newValue ];
+                    } else {
+                        $changedFields[$label] = $fieldConfig['options'][ $newValue ];
+                    }
+                }
 
 			} else {
 				$changedFields[$label] = $newValue;
