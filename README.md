@@ -1,3 +1,10 @@
+## ⚠ DEPRECATED
+
+This extension is deprecated and only there for historical reasons.
+Please consider using [Contao Notification Center](https://github.com/terminal42/contao-notification_center) instead.
+
+---
+
 contao-member-update-notification
 =================================
 
